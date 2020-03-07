@@ -1,4 +1,6 @@
 # Practice using GSL for Gaussin Fitting
+There's a Makefile which will create the binary from the ascii file `data.csv`
+and then runs the GSL steps.
 
 ## Input Test Data
 Ascii data `data.csv` comes from `caget channel_name`.
