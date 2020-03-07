@@ -40,8 +40,8 @@ class ConvertData
 
 int main()
 {
-    string input_data_path = "/home/dpcuneo/git_cplus/data.csv";
-    string output_data_path = "/home/dpcuneo/git_cplus/data.bin";
+    string input_data_path = "data.csv";
+    string output_data_path = "data.bin";
     vector<string> rows;
 
     ConvertData convert_data;
