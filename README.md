@@ -10,12 +10,12 @@ The CPP program `create_binary_data.cpp` converts the ascii data into a binary f
 ## GSL
 GSL is then used to read the binary data and  perform the following steps:
 
-    1. 2D Gaussian smoothing
-        1. kernel size = 5
-        1. alpha = 0.5
-    1. Aggregate cols 
-        1. Using the mean of the axes 0 and then 1
-    1. Fit Gaussian curve to the `mean_x` and `mean_y`
+1. 2D Gaussian smoothing
+	1. kernel size = 5
+	1. alpha = 0.5
+1. Aggregate cols 
+	1. Using the mean of the axes 0 and then 1
+1. Fit Gaussian curve to the `mean_x` and `mean_y`
 
 ### GSL Example Page
 https://www.gnu.org/software/gsl/doc/html/filter.html
