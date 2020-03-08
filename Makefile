@@ -1,6 +1,6 @@
 CFLAGS += -Wall -std=c99 -g3
-INCLUDE += `gsl-conifg --cflags`
-LDFLAGS += -`gsl-config  --libs`
+INCLUDE += `gsl-config --cflags`
+LDFLAGS += `gsl-config --libs`
 AUX_FLAGS =
 
 all: convert_ascii_to_binary data.bin smooth
