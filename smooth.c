@@ -60,7 +60,3 @@ int main(){
 
     return 0;
 }
-
-/*
- * gcc -o myprog -lgslcblas -lgsl
- */
