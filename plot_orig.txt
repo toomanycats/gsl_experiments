@@ -1,3 +1,4 @@
+set title "Original Beam Profile"
 set view map
 set xrange[0:299]
 set yrange[0:299]
