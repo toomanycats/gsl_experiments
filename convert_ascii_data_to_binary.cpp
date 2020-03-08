@@ -25,10 +25,12 @@ class ConvertData
             while (fin >> line) {
                 int num = atoi(line.c_str());
                 fout.write((char*)&num, sizeof(num));
-                //printf("%x\n", atoi(line.c_str()));
+#ifndef DEBUG
+                printf("%x\n", num);
+#endif
                 count++;
             }
-            cout << count << " lines counted." << endl;
+            cout << count << " lines written." << endl;
         }
 
 };
