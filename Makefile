@@ -8,9 +8,9 @@ all: convert_ascii_to_binary data.bin smooth
 convert_ascii_to_binary: convert_ascii_data_to_binary.cpp
 	g++ $^ -o $@ $(AUX_FLAGS)
 
-debug_convert: AUX_FLAGS = -D DEBUG=1
-debug_convert: convert_ascii_to_binary
-debug_convert: data.bin
+debug_convert:
+	AUX_FLAGS = -D DEBUG=1
+	convert_ascii_to_binary
 
 smooth: smooth.c
 	gcc $(CFLAGS) $(INCLUDE) $(LDFLAGS) $^ -o $@
@@ -18,7 +18,11 @@ smooth: smooth.c
 data.bin: convert_ascii_data_to_binary.cpp
 	./convert_ascii_to_binary
 
-clean:
-	rm data.bin convert_ascii_to_binary smooth
+plot_orig:
+	xargs -n 299 < data.csv > orig.ascii
+	gnuplot -p plot_orig.txt
 
-.PHONY: clean debug_convert
+clean:
+	rm data.bin convert_ascii_to_binary smooth orig.ascii
+
+.PHONY: clean debug_convert plot_orig
