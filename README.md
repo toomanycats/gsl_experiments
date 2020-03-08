@@ -13,6 +13,5 @@ GSL is then used to read the binary data and first
     1. Aggregate cols and rows to a `mean_x` and `mean_y`
     1. Fit Gaussian curve to the `mean_x` and `mean_y`
 
-
-
-
+### GSL Example Page
+https://www.gnu.org/software/gsl/doc/html/filter.html
