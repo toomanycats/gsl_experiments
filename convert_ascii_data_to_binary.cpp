@@ -1,6 +1,6 @@
+#include <stdlib.h>
 #include <iostream>
 #include <fstream>
-#include <vector>
 #include <string>
 
 using namespace std;
@@ -13,44 +13,31 @@ using namespace std;
 class ConvertData
 {
     public:
-        void load_data_from_file(string infile, vector<string> &rows)
-		{
-			int count;
-			ifstream fin;
-			string line;
-
-			fin.open(infile.c_str(), ios::in);
-			while (fin >> line) {
-				//rows.clear();
-				getline(fin, line);
-				rows.push_back(line);
-				count++;
-			}
-			cout << count << " lines counted." << endl;
-		}
-
-        void write_rows_to_binary(string outfile, vector<string> &rows){
-            vector<string>::iterator it;
+        void convert(string infile, string outfile) {
+            int count = 0;
+            ifstream fin;
+            fin.open(infile.c_str(), ios::in);
 
             ofstream fout;
-            fout.open(outfile.c_str(), fstream::binary);
+            fout.open(outfile.c_str(), ios::binary);
 
-            for(it = rows.begin(); it != rows.end(); it++) {
-                fout << (char*) &it;
+            string line;
+            while (fin >> line) {
+                int num = atoi(line.c_str());
+                fout.write((char*)&num, sizeof(num));
+                //printf("%x\n", atoi(line.c_str()));
+                count++;
             }
-
-            fout.close();
+            cout << count << " lines counted." << endl;
         }
+
 };
 
 int main()
 {
     string input_data_path = "data.csv";
     string output_data_path = "data.bin";
-    vector<string> rows;
 
     ConvertData convert_data;
-
-    convert_data.load_data_from_file(input_data_path, rows);
-    convert_data.write_rows_to_binary(output_data_path, rows);
+    convert_data.convert(input_data_path, output_data_path);
 }
