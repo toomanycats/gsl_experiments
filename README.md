@@ -16,6 +16,12 @@ GSL is then used to read the binary data and first
 ### GSL Example Page
 https://www.gnu.org/software/gsl/doc/html/filter.html
 
+# Viewing the Beam Profile
+## Original Beam Profile
+![Original Beam Profile](orig_beam_profile.png)
+
+## Smoothed Beam Profile with Fit
+TODO
 
 # Sanity Checking Binary Conversion
     tail data.csv
