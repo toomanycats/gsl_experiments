@@ -22,15 +22,15 @@ class ConvertData
             fout.open(outfile.c_str(), ios::binary);
 
             string line;
+            int16_t num;
             while (fin >> line) {
-                int num = atoi(line.c_str());
+                num = atoi(line.c_str());
                 fout.write((char*)&num, sizeof(num));
-#ifndef DEBUG
                 printf("%x\n", num);
-#endif
                 count++;
             }
-            cout << count << " lines written." << endl;
+            cout << "size of conversion:" << sizeof(num) << endl;
+            cout << count << " numbers converted." << endl;
         }
 
 };
