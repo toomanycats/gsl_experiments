@@ -1,7 +1,7 @@
 *.swp
 tags
 data.bin
-smooth
+fit_gaussian
 convert_ascii_to_binary
 orig.ascii
 data_sm.txt
