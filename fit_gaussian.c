@@ -94,7 +94,7 @@ int main(){
         gsl_vector_set(mux, i, mu_x);
     }
 
-    // Save X and Y ave to file
+    // Save X and Y ave to file.
     FILE *f_sm = fopen("data_sm.txt", "w");
     if (f_sm == NULL){
         printf("Could not open file for smooth data save.\n");
@@ -106,6 +106,15 @@ int main(){
         fprintf(f_sm, "%i %f %f\n", i, x, y);
     }
     fclose(f_sm);
+
+    // save smoothed image to file in ascii for gnuplot.
+    FILE *f_img = fopen("smoothed_image.txt", "w");
+    for (int i=0; i < DIM; i++) {
+        for (int j=0; j < DIM; j++) {
+            fprintf(f_img, "%f ", gsl_vector_get(data_sq_t[i], j));
+        }
+        fprintf(f_img, "\n");
+    }
 
     // Guassian Fit
     //
