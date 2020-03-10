@@ -28,6 +28,9 @@ https://www.gnu.org/software/gsl/doc/html/filter.html
 To get a good fast fit, I propose firt smoothing the 2D beam profile image
 with gaussian kernel.
 
+You can see from the plot, that there's a Y offset that can be removed before
+fitting. The conversion from pixels to microns is ~1.7 um/pixel.
+
 ![Smoothed Beam](smoothed_image.png)
 
 ## Fit Params
