@@ -42,36 +42,49 @@ int main(){
         }
     }
 
-    /* testing read
-    for (int i=0; i<DIM0; i++){
-        long unsigned int x = gsl_vector_get(data_sq[150], i);
-        printf("%lu\n", x);
-    }
-    */
-
     // smoothing
     gsl_filter_gaussian_workspace *gauss_p = gsl_filter_gaussian_alloc(K_SIZE);
-    // kernel
-    gsl_vector *kernel = gsl_vector_alloc(K_SIZE);
-    gsl_filter_gaussian_kernel(ALPHA, 0, 0, kernel);
     // iterate over array smoothing
     for (int i=0; i < DIM0; i++)
         gsl_filter_gaussian(GSL_FILTER_END_PADVALUE, ALPHA, 0, data_sq[i], data_sq[i], gauss_p);
 
     // aggreate rows and cols
-	double x, mu, mu_old;
+	double x, mu_x, mu_old_x;
+	double y, mu_y, mu_old_y;
+
+    // final target, aggreated x and y
+    gsl_vector *mux = gsl_vector_alloc(DIM0);
+    gsl_vector *muy = gsl_vector_alloc(DIM1);
+
     for (int i=0; i < DIM0; i++){
 		for (int j=0; j < DIM1; j++){
-			x = gsl_vector_get(data_sq[i], j);
-            if (j == 0)
-                mu_old = x;
-            mu = mu_old + (x - mu_old) / (double)(j + 1);
-            mu_old = mu;
+			y = gsl_vector_get(data_sq[i], j);
+            x = gsl_vector_get(data_sq[j], i);
+
+            if (j == 0) {
+                mu_old_x = x;
+                mu_old_y = y;
+            }
+
+            mu_x = mu_old_x + (x - mu_old_x) / (double)(j + 1);
+            mu_old_x = mu_x;
+
+            mu_y = mu_old_y + (y - mu_old_y) / (double)(j + 1);
+            mu_old_y = mu_y;
 		}
-        //testing
-        printf("%f\n", mu);
+        gsl_vector_set(muy, i, mu_y);
+        gsl_vector_set(mux, i, mu_x);
     }
 
+    // print for testing
+    for (int i=0; i < DIM0; i++) {
+        x = gsl_vector_get(mux, i);
+        y = gsl_vector_get(muy, i);
+        printf("%f,%f\n", x, y);
+    }
+
+    // Guassian Fit
+    //
     // clean up
     for (int i=0; i < DIM0; i++)
         gsl_vector_free(data_sq[i]);
