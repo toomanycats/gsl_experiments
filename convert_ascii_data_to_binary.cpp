@@ -26,7 +26,7 @@ class ConvertData
             while (fin >> line) {
                 num = atoi(line.c_str());
                 fout.write((char*)&num, sizeof(num));
-                printf("%x\n", num);
+                //printf("%x\n", num);
                 count++;
             }
             cout << "size of conversion:" << sizeof(num) << endl;
