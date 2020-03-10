@@ -1,3 +1,6 @@
+set term png size 700,500
+set output 'smooth_ave_plot.png'
 set multiplot layout 1,2
-plot 'data.test' u 0:2 with lines
-plot 'data.test' u 0:3 with lines;
+set title "Averaged Rows and Columns After Smoothing"
+plot 'data_sm.txt' u 0:2 with lines
+plot 'data_sm.txt' u 0:3 with lines
