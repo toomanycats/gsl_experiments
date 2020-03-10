@@ -5,8 +5,7 @@
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_errno.h>
 
-#define DIM0 299
-#define DIM1 299
+#define DIM 299 /* square image */
 #define ALPHA 10.0
 #define K_SIZE 51 /* window size */
 #define INFILE "data.bin"
@@ -25,34 +24,44 @@ int main(){
     //gsl_set_error_handler_off();
 
     // need array of vectors to create a square
-    gsl_vector* data_sq0[DIM0];
-    gsl_vector* data_sq1[DIM1];
+    gsl_vector* data_sq[DIM];
 
-    for (int i=0; i <= DIM0; i++) {
-        data_sq0[i] = gsl_vector_alloc(DIM0);
-        data_sq1[i] = gsl_vector_alloc(DIM1);
+    for (int i=0; i <= DIM; i++) {
+        data_sq[i] = gsl_vector_alloc(DIM);
     }
 
     // Load Data
     int temp;
-    for (int i=0; i < DIM0; i++) {
-        for(int j=0; j < DIM1; j++){
+    for (int i=0; i < DIM; i++) {
+        for(int j=0; j < DIM; j++){
             ret = fread(&temp, sizeof(uint16_t), 1, infile);
             if (ret < 0){
                 fprintf(stderr, "fread failure.\n");
                 exit(1);
             }
-            gsl_vector_set(data_sq0[i], j, temp);
-            gsl_vector_set(data_sq1[j], i, temp);
+            gsl_vector_set(data_sq[i], j, temp);
         }
     }
 
     // smoothing
     gsl_filter_gaussian_workspace *gauss_p = gsl_filter_gaussian_alloc(K_SIZE);
+
     // iterate over array smoothing
-    for (int k=0; k < DIM0; k++) {
-        gsl_filter_gaussian(GSL_FILTER_END_PADVALUE, ALPHA, 0, data_sq0[k], data_sq0[k], gauss_p);
-        gsl_filter_gaussian(GSL_FILTER_END_PADVALUE, ALPHA, 0, data_sq1[k], data_sq1[k], gauss_p);
+    for (int k=0; k < DIM; k++) {
+        gsl_filter_gaussian(GSL_FILTER_END_PADVALUE, ALPHA, 0, data_sq[k], data_sq[k], gauss_p);
+    }
+
+    // Transpose
+    for (int i=0; i < DIM; i++) {
+        for (int j=0; j < DIM; j++) {
+			double v = gsl_vector_get(data_sq[i], j);
+            gsl_vector_set(data_sq[j], i, v);
+        }
+    }
+
+    // Smooth on transposed data
+    for (int k=0; k < DIM; k++) {
+        gsl_filter_gaussian(GSL_FILTER_END_PADVALUE, ALPHA, 0, data_sq[k], data_sq[k], gauss_p);
     }
 
     // Iterative Mean
@@ -60,13 +69,13 @@ int main(){
 	double y, mu_y, mu_old_y;
 
     // final target, 1d aggregated x and y
-    gsl_vector *mux = gsl_vector_alloc(DIM0);
-    gsl_vector *muy = gsl_vector_alloc(DIM1);
+    gsl_vector *mux = gsl_vector_alloc(DIM);
+    gsl_vector *muy = gsl_vector_alloc(DIM);
 
-    for (int i=0; i < DIM0; i++){
-		for (int j=0; j < DIM1; j++){
-			y = gsl_vector_get(data_sq0[i], j);
-            x = gsl_vector_get(data_sq1[j], i);
+    for (int i=0; i < DIM; i++){
+		for (int j=0; j < DIM; j++){
+			y = gsl_vector_get(data_sq[i], j);
+            x = gsl_vector_get(data_sq[j], i);
 
             if (j == 0) {
                 mu_old_x = x;
@@ -89,7 +98,7 @@ int main(){
         printf("Could not open file for smooth data save.\n");
         exit(-1);
     }
-    for (int i=0; i < DIM0; i++) {
+    for (int i=0; i < DIM; i++) {
         x = gsl_vector_get(mux, i);
         y = gsl_vector_get(muy, i);
         fprintf(f_sm, "%i %f %f\n", i, x, y);
@@ -98,9 +107,8 @@ int main(){
     // Guassian Fit
     //
     // clean up
-    for (int i=0; i < DIM0; i++) {
-        gsl_vector_free(data_sq0[i]);
-        gsl_vector_free(data_sq1[i]);
+    for (int i=0; i < DIM; i++) {
+        gsl_vector_free(data_sq[i]);
     }
 
     gsl_filter_gaussian_free(gauss_p);
