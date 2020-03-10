@@ -25,6 +25,6 @@ plot_orig:
 	gnuplot -p plot_orig.txt
 
 clean:
-	rm data.bin convert_ascii_to_binary fit_gaussian orig.ascii data_sm.txt
+	rm data.bin convert_ascii_to_binary fit_gaussian orig.ascii data_sm.txt smoothed_image.txt
 
-.PHONY: clean debug_convert plot_orig
+.PHONY: clean plot_orig
