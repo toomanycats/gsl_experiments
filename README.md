@@ -13,7 +13,7 @@ GSL is then used to read the binary data and  perform the following steps:
 1. 2D Gaussian smoothing
 	1. kernel size = 5
 	1. alpha = 0.5
-1. Aggregate cols 
+1. Aggregate cols
 	1. Using the mean of the axes 0 and then 1
 1. Fit Gaussian curve to the `mean_x` and `mean_y`
 
@@ -24,23 +24,15 @@ https://www.gnu.org/software/gsl/doc/html/filter.html
 ## Original Beam Profile
 ![Original Beam Profile](orig_beam_profile.png)
 
-## Smoothed Beam Profile with Fit
-TODO
+## Smoothed Beam Profile
+To get a good fast fit, I propose firt smoothing the 2D beam profile image
+with gaussian kernel.
 
-# Sanity Checking Binary Conversion
-	tail -n 5 data.csv
+![Smoothed Beam](smoothed_image.png)
 
-	21
-	61
-	165
-	91
-	0
+## Fit Params
+The fit is performed on the two single dimension reductions (average) of the
+2D image.
 
-	hexdump data.bin | tail -n 5
-
-	00574b0 0031 0000 0024 0000 0000 0000 0011 0000
-	00574c0 0039 0000 0014 0000 0048 0000 0010 0000
-	00574d0 0015 0000 003d 0000 00a5 0000 005b 0000
-	00574e0 0000 0000                              
-	00574e4
+![Smoothed Image X and Y Averages](smooth_ave_plot.png)
 
