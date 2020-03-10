@@ -94,7 +94,7 @@ int main(){
         gsl_vector_set(mux, i, mu_x);
     }
 
-    // print for testing
+    // Save X and Y ave to file
     FILE *f_sm = fopen("data_sm.txt", "w");
     if (f_sm == NULL){
         printf("Could not open file for smooth data save.\n");
@@ -105,6 +105,7 @@ int main(){
         y = gsl_vector_get(muy, i);
         fprintf(f_sm, "%i %f %f\n", i, x, y);
     }
+    fclose(f_sm);
 
     // Guassian Fit
     //
