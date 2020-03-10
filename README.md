@@ -34,5 +34,5 @@ with gaussian kernel.
 The fit is performed on the two single dimension reductions (average) of the
 2D image.
 
-![Smoothed Image X and Y Averages](smoothed_ave_plot.png)
+![Smoothed Averages](smooth_ave_plot.png)
 
