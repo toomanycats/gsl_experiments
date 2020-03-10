@@ -5,3 +5,4 @@ fit_gaussian
 convert_ascii_to_binary
 orig.ascii
 data_sm.txt
+smooth_ave_plot.png
