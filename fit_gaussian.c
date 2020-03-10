@@ -25,9 +25,11 @@ int main(){
 
     // need array of vectors to create a square
     gsl_vector* data_sq[DIM];
+    gsl_vector* data_sq_t[DIM];
 
     for (int i=0; i <= DIM; i++) {
         data_sq[i] = gsl_vector_alloc(DIM);
+        data_sq_t[i] = gsl_vector_alloc(DIM);
     }
 
     // Load Data
@@ -55,13 +57,13 @@ int main(){
     for (int i=0; i < DIM; i++) {
         for (int j=0; j < DIM; j++) {
 			double v = gsl_vector_get(data_sq[i], j);
-            gsl_vector_set(data_sq[j], i, v);
+            gsl_vector_set(data_sq_t[j], i, v);
         }
     }
 
     // Smooth on transposed data
     for (int k=0; k < DIM; k++) {
-        gsl_filter_gaussian(GSL_FILTER_END_PADVALUE, ALPHA, 0, data_sq[k], data_sq[k], gauss_p);
+        gsl_filter_gaussian(GSL_FILTER_END_PADVALUE, ALPHA, 0, data_sq_t[k], data_sq_t[k], gauss_p);
     }
 
     // Iterative Mean
@@ -74,8 +76,8 @@ int main(){
 
     for (int i=0; i < DIM; i++){
 		for (int j=0; j < DIM; j++){
-			y = gsl_vector_get(data_sq[i], j);
-            x = gsl_vector_get(data_sq[j], i);
+			y = gsl_vector_get(data_sq_t[i], j);
+            x = gsl_vector_get(data_sq_t[j], i);
 
             if (j == 0) {
                 mu_old_x = x;
@@ -109,6 +111,7 @@ int main(){
     // clean up
     for (int i=0; i < DIM; i++) {
         gsl_vector_free(data_sq[i]);
+        gsl_vector_free(data_sq_t[i]);
     }
 
     gsl_filter_gaussian_free(gauss_p);
