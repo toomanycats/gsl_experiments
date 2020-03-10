@@ -1,4 +1,5 @@
 set term png size 700,500
+set view map
 set output 'smoothed_image.png'
 set title "Smoothed Beam Profile"
 splot 'smoothed_image.txt' matrix with image
