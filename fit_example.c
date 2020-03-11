@@ -3,22 +3,8 @@
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_blas.h>
 #include <gsl/gsl_multifit_nlinear.h>
+#include "fit_example.h"
 
-#define DIM 299
-
-struct final_pos {
-    double amp;
-    double mu;
-    double sig;
-};
-
-struct data {
-    double *t;
-    double *y;
-    size_t n;
-};
-
-/* model function: a * exp( -1/2 * [ (t - b) / c ]^2 ) */
 double gaussian(const double a, const double b, const double c, const double t) {
 	const double z = (t - b) / c;
 	return (a * exp(-0.5 * z * z));
@@ -84,7 +70,7 @@ void rem_data_offset(struct data *fit_data, int num) {
    }
 }
 
-int main (void) {
+int fit(gsl_vector *data_to_fit) {
     const size_t n = DIM;  /* number of data points to fit */
     const size_t p = 3;    /* number of model parameters */
 
@@ -100,18 +86,9 @@ int main (void) {
     fit_data.n = n;
 
     /* load smoothed data */
-    int ret, ind;
-    float y1, y2;
-    FILE *infile = fopen("data_sm.txt", "r");
     for (int i=0; i < n; ++i) {
-        //read csv smoothed data
-        ret = fscanf(infile, "%i %f %f", &ind, &y1, &y2);
-        if (ret < 0) {
-            fprintf(stderr, "fscanf failed.\n");
-            exit(-1);
-        }
-        fit_data.t[i] = (double)ind;
-        fit_data.y[i] = (double)y1;
+        fit_data.t[i] = (double)i;
+        fit_data.y[i] = gsl_vector_get(data_to_fit, i);
     }
 
     rem_data_offset(&fit_data, n);
@@ -125,8 +102,8 @@ int main (void) {
     fdf.params = &fit_data;
 
     /* starting point */
-    gsl_vector_set(x0, 0, 600.0); // amp
-    gsl_vector_set(x0, 1, 130.0); // mu
+    gsl_vector_set(x0, 0, 700.0); // amp
+    gsl_vector_set(x0, 1, 140.0); // mu
     gsl_vector_set(x0, 2, 20.0);  // sig
 
     solve_system(&fp, x0, &fdf, &fdf_params);
