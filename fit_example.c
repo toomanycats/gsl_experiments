@@ -72,6 +72,18 @@ void solve_system(struct final_pos *fp, gsl_vector *x0, gsl_multifit_nlinear_fdf
         gsl_multifit_nlinear_free(work);
 }
 
+void rem_data_offset(struct data *fit_data, int num) {
+    double cur_min = fit_data->y[0];
+    for (int i=1; i < num; i++){
+        if (fit_data->y[i] < cur_min)
+            cur_min = fit_data->y[i];
+    }
+
+   for (int j=0; j < num; j++){
+      fit_data->y[j] -= cur_min;
+   }
+}
+
 int main (void) {
     const size_t n = DIM;  /* number of data points to fit */
     const size_t p = 3;    /* number of model parameters */
@@ -101,6 +113,8 @@ int main (void) {
         fit_data.t[i] = (double)ind;
         fit_data.y[i] = (double)y1;
     }
+
+    rem_data_offset(&fit_data, n);
 
     /* define function to be minimized */
     fdf.f = func_f;
