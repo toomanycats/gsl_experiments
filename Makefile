@@ -19,6 +19,8 @@ fit_gaussian: fit_gaussian.c
 
 fit_test: fit_example.c
 	gcc $(CFLAGS) $(INCLUDE) $(LDFLAGS) $^ -o $@
+	./fit_test > fit_out.txt
+	gnuplot plot_gaussian_fit.txt
 
 data.bin: convert_ascii_data_to_binary.cpp
 	./convert_ascii_to_binary
