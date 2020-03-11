@@ -42,5 +42,5 @@ This plot are the two averaged rows and averaged columns:
 ![Smoothed Averages](smooth_ave_plot.png)
 
 This plot is the Gaussian fit one of the above:
-![Gaussian Fit] (gaussian_fit.png)
+![Gaussian Fit](gaussian_fit.png)
 
