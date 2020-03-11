@@ -6,3 +6,5 @@ convert_ascii_to_binary
 orig.ascii
 data_sm.txt
 smoothed_image.txt
+fit_test
+fit_out.txt
