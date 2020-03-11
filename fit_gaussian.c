@@ -4,14 +4,9 @@
 #include <gsl/gsl_filter.h>
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_errno.h>
-
-#define DIM 299 /* square image */
-#define ALPHA 10.0
-#define K_SIZE 51 /* window size */
-#define INFILE "data.bin"
+#include "fit_example.h"
 
 int main(){
-
     int ret;
     FILE *infile;
     infile = fopen(INFILE, "rb");
@@ -117,7 +112,8 @@ int main(){
     }
 
     // Guassian Fit
-    //
+    fit(muy);
+
     // clean up
     for (int i=0; i < DIM; i++) {
         gsl_vector_free(data_sq[i]);
