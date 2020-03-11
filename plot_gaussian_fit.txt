@@ -1,0 +1,4 @@
+set term png
+set output 'gaussian_fit.png'
+set title "Gaussian Fit to Smoothed Ave Columns"
+plot 'fit_out.txt' u 0:2 w lines, ''  u 0:3 w lines
