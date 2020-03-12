@@ -1,23 +1,26 @@
 #include <stdio.h>
+#include <gsl/gsl_filter.h>
 #include <gsl/gsl_vector.h>
-#include <gsl/gsl_matrix.h>
-#include <gsl/gsl_blas.h>
 #include <gsl/gsl_multifit_nlinear.h>
-#include "fit_tools.h"
 
-
-void save_smoothed_image(const char *outfile, gsl_vector *data_sq) {
-    FILE *f_img = fopen(*outfile, "w");
+void save_smoothed_image(char *outfile, gsl_vector* data_sq[]) {
+    FILE *f_img = fopen(outfile, "w");
+    if (f_img == NULL) {
+        fprintf(stderr, "Failed to open output file for smoothed image.\n");
+        exit(-2);
+    }
     for (int i=0; i < DIM; i++) {
         for (int j=0; j < DIM; j++) {
-            fprintf(f_img, "%f ", gsl_vector_get(data_sq_t[i], j));
+            fprintf(f_img, "%f ", gsl_vector_get(data_sq[i], j));
         }
         fprintf(f_img, "\n");
     }
+    fclose(f_img);
 }
 
 void save_averaged_to_file(const char *outfile, gsl_vector *mux, gsl_vector *muy) {
-    FILE *f_sm = fopen(*outfile, "w");
+    double x, y;
+    FILE *f_sm = fopen(outfile, "w");
     if (f_sm == NULL){
         printf("Could not open file for smooth data save.\n");
         exit(-1);
@@ -30,16 +33,14 @@ void save_averaged_to_file(const char *outfile, gsl_vector *mux, gsl_vector *muy
     fclose(f_sm);
 }
 
-void average_dim(gsl_vector *data_sq, gsl_vector *mux){
+void average_dim(gsl_vector *data_sq[], gsl_vector *mux){
 	double x, mu_x, mu_old_x;
     for (int i=0; i < DIM; i++){
 		for (int j=0; j < DIM; j++){
-			y = gsl_vector_get(data_sq_t[i], j);
-
+			x = gsl_vector_get(data_sq[i], j);
             if (j == 0) {
                 mu_old_x = x;
             }
-
             mu_x = mu_old_x + (x - mu_old_x) / (double)(j + 1);
             mu_old_x = mu_x;
 		}
@@ -47,7 +48,7 @@ void average_dim(gsl_vector *data_sq, gsl_vector *mux){
     }
 }
 
-void smooth_data_sq(gsl_vector*) {
+void smooth_data_sq(gsl_vector *data_sq[], gsl_filter_gaussian_workspace* gauss_p) {
     // iterate over array smoothing
     for (int k=0; k < DIM; k++) {
         gsl_filter_gaussian(GSL_FILTER_END_PADVALUE, ALPHA, 0, data_sq[k], data_sq[k], gauss_p);
@@ -60,7 +61,7 @@ void smooth_data_sq(gsl_vector*) {
     }
 }
 
-void transpose_data_sq(gsl_vector*) {
+void transpose_data_sq(gsl_vector* data_sq[]) {
     for (int i=0; i < DIM; i++) {
         for (int j=0; j < DIM; j++) {
 			double v = gsl_vector_get(data_sq[i], j);
@@ -69,7 +70,7 @@ void transpose_data_sq(gsl_vector*) {
     }
 }
 
-void load_data_from_file(gsl_vector*) {
+void load_data_from_file(gsl_vector* data_sq[]) {
     int ret;
     FILE *infile;
     infile = fopen(INFILE, "rb");
@@ -80,7 +81,6 @@ void load_data_from_file(gsl_vector*) {
 
     for (int i=0; i <= DIM; i++) {
         data_sq[i] = gsl_vector_alloc(DIM);
-        data_sq_t[i] = gsl_vector_alloc(DIM);
     }
 
     // Load Data
