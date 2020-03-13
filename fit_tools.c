@@ -2,6 +2,22 @@
 #include <gsl/gsl_filter.h>
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_multifit_nlinear.h>
+#include "fit_tools.h"
+
+void save_data_and_model(char *outfile, struct final_pos *fp, struct data *fit_data) {
+    FILE *f = fopen(outfile, "w");
+    if (f == NULL){
+        fprintf(stderr, "Failed to open file for writing:%s", __FUNCTION__);
+        exit(-1);
+    }
+
+    for (int i = 0; i < DIM; ++i) {
+        double ti = fit_data->t[i];
+        double yi = fit_data->y[i];
+        double fi = gaussian(fp->amp, fp->mu, fp->sig, ti);
+        fprintf(f, "%.1f %.3f %.3f\n", ti, yi, fi);
+    }
+}
 
 void save_smoothed_image(char *outfile, gsl_vector* data_sq[]) {
     FILE *f_img = fopen(outfile, "w");
@@ -162,53 +178,38 @@ void rem_data_offset(struct data *fit_data, int num) {
    }
 }
 
-int fit(gsl_vector *data_to_fit) {
+int fit(gsl_vector *data_to_fit, struct final_pos *fp, struct data *fit_data) {
     const size_t n = DIM;  /* number of data points to fit */
     const size_t p = 3;    /* number of model parameters */
 
-    struct final_pos fp;
     gsl_vector *f = gsl_vector_alloc(n);
     gsl_vector *x0 = gsl_vector_alloc(p);
     gsl_multifit_nlinear_fdf fdf;
     gsl_multifit_nlinear_parameters fdf_params = gsl_multifit_nlinear_default_parameters();
 
-    struct data fit_data;
-    fit_data.t = malloc(n * sizeof(double));
-    fit_data.y = malloc(n * sizeof(double));
-    fit_data.n = n;
 
-    /* load smoothed data */
+    /* load data */
     for (int i=0; i < n; ++i) {
-        fit_data.t[i] = (double)i;
-        fit_data.y[i] = gsl_vector_get(data_to_fit, i);
+        fit_data->t[i] = (double)i;
+        fit_data->y[i] = gsl_vector_get(data_to_fit, i);
     }
 
-    rem_data_offset(&fit_data, n);
+    rem_data_offset(fit_data, n);
 
     /* define function to be minimized */
     fdf.f = func_f;
-    fdf.fvv = NULL; /* not using geodesic acceleration */
     fdf.df = NULL;  /* set to NULL for finite-difference Jacobian */
+    fdf.fvv = NULL; /* not using geodesic acceleration */
     fdf.n = n;
     fdf.p = p;
-    fdf.params = &fit_data;
+    fdf.params = fit_data;
 
     /* starting point */
     gsl_vector_set(x0, 0, 700.0); // amp
     gsl_vector_set(x0, 1, 140.0); // mu
     gsl_vector_set(x0, 2, 20.0);  // sig
 
-    solve_system(&fp, x0, &fdf, &fdf_params);
-
-    /* print data and model */
-    printf("index data fit\n");
-    for (int i = 0; i < n; ++i) {
-        double ti = fit_data.t[i];
-        double yi = fit_data.y[i];
-        double fi = gaussian(fp.amp, fp.mu, fp.sig, ti);
-
-        printf("%.1f %.3f %.3f\n", ti, yi, fi);
-    }
+    solve_system(fp, x0, &fdf, &fdf_params);
 
     gsl_vector_free(f);
     gsl_vector_free(x0);
