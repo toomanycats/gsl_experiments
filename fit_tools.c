@@ -4,7 +4,7 @@
 #include <gsl/gsl_multifit_nlinear.h>
 #include "fit_tools.h"
 
-void save_data_and_model(char *outfile, struct final_pos *fp, struct data *fit_data) {
+void save_data_and_model(char *outfile, FinalPos *fp, Data *fit_data) {
     FILE *f = fopen(outfile, "w");
     if (f == NULL){
         fprintf(stderr, "Failed to open file for writing:%s", __FUNCTION__);
@@ -49,18 +49,28 @@ void save_averaged_to_file(const char *outfile, gsl_vector *mux, gsl_vector *muy
     fclose(f_sm);
 }
 
-void average_dim(gsl_vector *data_sq[], gsl_vector *mux){
-	double x, mu_x, mu_old_x;
+void average_dim(gsl_vector *data_sq[], gsl_vector *mu_vec, int axis) {
+	double x, mu, mu_old;
     for (int i=0; i < DIM; i++){
 		for (int j=0; j < DIM; j++){
-			x = gsl_vector_get(data_sq[i], j);
-            if (j == 0) {
-                mu_old_x = x;
+            if (axis == 0)
+                x = gsl_vector_get(data_sq[i], j);
+
+            else if (axis == 1)
+                x = gsl_vector_get(data_sq[j], i);
+
+            else {
+                fprintf(stderr, "axis must be either 0 or 1.\n");
+                exit(-1);
             }
-            mu_x = mu_old_x + (x - mu_old_x) / (double)(j + 1);
-            mu_old_x = mu_x;
+
+            if (j == 0)
+                mu_old = x;
+
+            mu = mu_old + (x - mu_old) / (double)(j + 1);
+            mu_old = mu;
 		}
-        gsl_vector_set(mux, i, mu_x);
+        gsl_vector_set(mu_vec, i, mu);
     }
 }
 
@@ -119,7 +129,7 @@ double gaussian(const double a, const double b, const double c, const double t) 
 }
 
 int func_f (const gsl_vector *x, void *params, gsl_vector * f) {
-	struct data *d = (struct data *) params;
+	Data *d = (Data *) params;
 	double a = gsl_vector_get(x, 0);
 	double b = gsl_vector_get(x, 1);
 	double c = gsl_vector_get(x, 2);
@@ -135,7 +145,7 @@ int func_f (const gsl_vector *x, void *params, gsl_vector * f) {
 	return GSL_SUCCESS;
 }
 
-void solve_system(struct final_pos *fp, gsl_vector *x0, gsl_multifit_nlinear_fdf *fdf, gsl_multifit_nlinear_parameters *params) {
+void solve_system(FinalPos *fp, gsl_vector *x0, gsl_multifit_nlinear_fdf *fdf, gsl_multifit_nlinear_parameters *params) {
         const gsl_multifit_nlinear_type *T = gsl_multifit_nlinear_trust;
         const size_t max_iter = 200;
         const double xtol = 1.0e-8;
@@ -166,7 +176,7 @@ void solve_system(struct final_pos *fp, gsl_vector *x0, gsl_multifit_nlinear_fdf
         gsl_multifit_nlinear_free(work);
 }
 
-void rem_data_offset(struct data *fit_data, int num) {
+void rem_data_offset(Data *fit_data, int num) {
     double cur_min = fit_data->y[0];
     for (int i=1; i < num; i++){
         if (fit_data->y[i] < cur_min)
@@ -178,7 +188,7 @@ void rem_data_offset(struct data *fit_data, int num) {
    }
 }
 
-int fit(gsl_vector *data_to_fit, struct final_pos *fp, struct data *fit_data) {
+int fit(gsl_vector *data_to_fit, FinalPos *fp, Data *fit_data) {
     const size_t n = DIM;  /* number of data points to fit */
     const size_t p = 3;    /* number of model parameters */
 
