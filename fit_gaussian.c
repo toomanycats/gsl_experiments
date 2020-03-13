@@ -41,7 +41,8 @@ int main(){
     fit_data_x->t = malloc(DIM * sizeof(double));
     fit_data_x->y = malloc(DIM * sizeof(double));
     fit_data_x->n = DIM;
-    fit(mux, fpx, fit_data_x);
+    axis = 0;
+    fit(mux, fpx, fit_data_x, axis);
 
     //save ascii data to file
     char *outfile_data_model_x = "data_model_x.txt";
@@ -52,7 +53,8 @@ int main(){
     fit_data_y->t = malloc(DIM * sizeof(double));
     fit_data_y->y = malloc(DIM * sizeof(double));
     fit_data_y->n = DIM;
-    fit(muy, fpy, fit_data_y);
+    axis = 1;
+    fit(muy, fpy, fit_data_y, axis);
 
     char *outfile_data_model_y = "data_model_y.txt";
     save_data_and_model(outfile_data_model_y, fpy, fit_data_y);
