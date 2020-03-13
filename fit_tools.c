@@ -5,8 +5,8 @@
 #include "fit_tools.h"
 
 void save_data_and_model(char *outfile, FinalPos *fp, Data *fit_data) {
-    FILE *f = fopen(outfile, "w");
-    if (f == NULL){
+    FILE *file = fopen(outfile, "w");
+    if (file == NULL){
         fprintf(stderr, "Failed to open file for writing:%s", __FUNCTION__);
         exit(-1);
     }
@@ -15,7 +15,7 @@ void save_data_and_model(char *outfile, FinalPos *fp, Data *fit_data) {
         double ti = fit_data->t[i];
         double yi = fit_data->y[i];
         double fi = gaussian(fp->amp, fp->mu, fp->sig, ti);
-        fprintf(f, "%.1f %.3f %.3f\n", ti, yi, fi);
+        fprintf(file, "%.1f %.3f %.3f\n", ti, yi, fi);
     }
 }
 
@@ -129,7 +129,7 @@ double gaussian(const double a, const double b, const double c, const double t) 
 }
 
 int func_f (const gsl_vector *x, void *params, gsl_vector * f) {
-	Data *d = (Data *) params;
+	Data *d = (Data*)params;
 	double a = gsl_vector_get(x, 0);
 	double b = gsl_vector_get(x, 1);
 	double c = gsl_vector_get(x, 2);
@@ -143,6 +143,26 @@ int func_f (const gsl_vector *x, void *params, gsl_vector * f) {
 	}
 
 	return GSL_SUCCESS;
+}
+
+int func_df(const gsl_vector *x, void* params, gsl_matrix *J) {
+    size_t n = ((Data*)params)->n;
+    double *t = ((Data*)params)->t;
+    double a = gsl_vector_get(x, 0); // Amp
+    double b = gsl_vector_get(x, 1); // mu
+    double c = gsl_vector_get(x, 2); // sig
+
+
+    for (int i=0; i < n; i++) {
+        double z = (t[i] - b) / c;
+        double g = exp(-0.5 * z * z);
+
+        gsl_matrix_set(J, i, 0, -g);
+        gsl_matrix_set(J, i, 1, -(a / c) * g * z);
+        gsl_matrix_set(J, i, 2, -(a / c) * g * z * z );
+    }
+
+    return GSL_SUCCESS;
 }
 
 void solve_system(FinalPos *fp, gsl_vector *x0, gsl_multifit_nlinear_fdf *fdf, gsl_multifit_nlinear_parameters *params, int axis) {
@@ -209,14 +229,15 @@ int fit(gsl_vector *data_to_fit, FinalPos *fp, Data *fit_data, int axis) {
     /* define function to be minimized */
     fdf.f = func_f;
     fdf.df = NULL;  /* set to NULL for finite-difference Jacobian */
+    //fdf.df = func_df;
     fdf.fvv = NULL; /* not using geodesic acceleration */
     fdf.n = n;
     fdf.p = p;
     fdf.params = fit_data;
 
     /* starting point */
-    gsl_vector_set(x0, 0, 700.0); // amp
-    gsl_vector_set(x0, 1, 140.0); // mu
+    gsl_vector_set(x0, 0, 600.0); // amp
+    gsl_vector_set(x0, 1, 130.0); // mu
     gsl_vector_set(x0, 2, 20.0);  // sig
 
     solve_system(fp, x0, &fdf, &fdf_params, axis);
