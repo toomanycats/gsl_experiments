@@ -20,8 +20,7 @@ struct data {
     size_t n;
 };
 
-int fit(gsl_vector*);
-
+void save_data_and_model(char *outfile, struct final_pos *fp, struct data *fit_data);
 void save_smoothed_image(char *outfile, gsl_vector*[]);
 void save_averaged_to_file(const char *outfile, gsl_vector *mux, gsl_vector *muy);
 void average_dim(gsl_vector *data_sq[], gsl_vector *mux);
@@ -31,4 +30,4 @@ void load_data_from_file(gsl_vector* data_sq[]);
 double gaussian(const double a, const double b, const double c, const double t);
 void solve_system(struct final_pos *fp, gsl_vector *x0, gsl_multifit_nlinear_fdf *fdf, gsl_multifit_nlinear_parameters *params);
 void rem_data_offset(struct data *fit_data, int num);
-int fit(gsl_vector *data_to_fit);
+int fit(gsl_vector *data_to_fit, struct final_pos *fp, struct data *fit_data);
