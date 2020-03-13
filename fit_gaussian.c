@@ -17,8 +17,8 @@ int main(){
     gsl_filter_gaussian_workspace *gauss_p = gsl_filter_gaussian_alloc(K_SIZE);
 
     smooth_data_sq(data_sq, gauss_p);
-    char *outfile = "smoothed_image.txt";
-    save_smoothed_image_to_file(outfile, data_sq);
+    char *sm_image_outfile = "smoothed_image.txt";
+    save_smoothed_image(sm_image_outfile, data_sq);
 
     // Mean of rows and cols
     // final target, 1d aggregated x and y"
@@ -26,12 +26,30 @@ int main(){
     average_dim(data_sq, mux);
     gsl_vector *muy = gsl_vector_alloc(DIM);
     average_dim(data_sq, muy);
-    char *outfile data_sm.txt;
-    save_averaged_to_file(outfile);
+    char *data_sm_outfile = "data_sm.txt";
+    save_averaged_to_file(data_sm_outfile, mux, muy);
 
     // Guassian Fit
-    fit(muy);
-    fit(mux);
+    struct final_pos *fpx = malloc(sizeof(struct final_pos)); /*struct to hold final params */
+    struct data *fit_data_x = malloc(sizeof(struct data));
+    fit_data_x->t = malloc(DIM * sizeof(double));
+    fit_data_x->y = malloc(DIM * sizeof(double));
+    fit_data_x->n = DIM;
+    fit(mux, fpx, fit_data_x);
+
+    struct final_pos *fpy = malloc(sizeof(struct final_pos)); /*struct to hold final params */
+    struct data *fit_data_y = malloc(sizeof(struct data));
+    fit_data_y->t = malloc(DIM * sizeof(double));
+    fit_data_y->y = malloc(DIM * sizeof(double));
+    fit_data_y->n = DIM;
+    fit(muy, fpy, fit_data_y);
+
+    //save ascii data to file
+    char *outfile_data_model_x = "data_model_x.txt";
+    save_data_and_model(outfile_data_model_x, fpx, fit_data_x);
+
+    char *outfile_data_model_y = "data_model_y.txt";
+    save_data_and_model(outfile_data_model_y, fpy, fit_data_y);
 
     // clean up
     for (int i=0; i < DIM; i++) {
