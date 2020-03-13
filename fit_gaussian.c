@@ -23,30 +23,36 @@ int main(){
     // Mean of rows and cols
     // final target, 1d aggregated x and y"
     gsl_vector *mux = gsl_vector_alloc(DIM);
-    average_dim(data_sq, mux);
+    int axis = 0;
+    average_dim(data_sq, mux, axis);
+
+    // Y dim
     gsl_vector *muy = gsl_vector_alloc(DIM);
-    average_dim(data_sq, muy);
+    axis = 1;
+    average_dim(data_sq, muy, axis);
+
+    // save both x and y averages
     char *data_sm_outfile = "data_sm.txt";
     save_averaged_to_file(data_sm_outfile, mux, muy);
 
     // Guassian Fit
-    struct final_pos *fpx = malloc(sizeof(struct final_pos)); /*struct to hold final params */
-    struct data *fit_data_x = malloc(sizeof(struct data));
+    FinalPos *fpx = malloc(sizeof(FinalPos));
+    Data *fit_data_x = malloc(sizeof(Data));
     fit_data_x->t = malloc(DIM * sizeof(double));
     fit_data_x->y = malloc(DIM * sizeof(double));
     fit_data_x->n = DIM;
     fit(mux, fpx, fit_data_x);
 
-    struct final_pos *fpy = malloc(sizeof(struct final_pos)); /*struct to hold final params */
-    struct data *fit_data_y = malloc(sizeof(struct data));
+    //save ascii data to file
+    char *outfile_data_model_x = "data_model_x.txt";
+    save_data_and_model(outfile_data_model_x, fpx, fit_data_x);
+
+    FinalPos *fpy = malloc(sizeof(FinalPos));
+    Data *fit_data_y = malloc(sizeof(Data));
     fit_data_y->t = malloc(DIM * sizeof(double));
     fit_data_y->y = malloc(DIM * sizeof(double));
     fit_data_y->n = DIM;
     fit(muy, fpy, fit_data_y);
-
-    //save ascii data to file
-    char *outfile_data_model_x = "data_model_x.txt";
-    save_data_and_model(outfile_data_model_x, fpx, fit_data_x);
 
     char *outfile_data_model_y = "data_model_y.txt";
     save_data_and_model(outfile_data_model_y, fpy, fit_data_y);
@@ -56,7 +62,13 @@ int main(){
         gsl_vector_free(data_sq[i]);
     }
 
+    gsl_vector_free(mux);
+    gsl_vector_free(muy);
     gsl_filter_gaussian_free(gauss_p);
+    free(fpx);
+    free(fpy);
+    free(fit_data_x);
+    free(fit_data_y);
 
     return 0;
 }
