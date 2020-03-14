@@ -228,8 +228,8 @@ int fit(gsl_vector *data_to_fit, FinalPos *fp, Data *fit_data, int axis) {
 
     /* define function to be minimized */
     fdf.f = func_f;
-    //fdf.df = NULL;  /* set to NULL for finite-difference Jacobian */
-    fdf.df = func_df;
+     fdf.df = NULL;  /* set to NULL for finite-difference Jacobian */
+    //fdf.df = func_df;
     fdf.fvv = NULL; /* not using geodesic acceleration */
     fdf.n = n;
     fdf.p = p;

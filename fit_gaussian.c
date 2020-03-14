@@ -7,8 +7,8 @@
  */
 
 #include <string.h>
+#include <getopt.h> // required when using -std=c99
 #include <unistd.h>
-#include <ctype.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,16 +23,16 @@ int main(int argc, char **argv){
     //gsl_set_error_handler_off();
 
 	int smooth_opt = 1;
-	int c;
-	while ((c = getopt (argc, argv, "s:")) != -1)
-		switch (c)
-		{
-		case 's':
-			smooth_opt = 1;
-			break;
-		default:
-			abort ();
-		}
+    int c;
+	while ((c = getopt(argc, argv, "s")) != -1) {
+        switch(c) {
+            case 's':
+                smooth_opt = 1;
+                printf("Using Smoothing\n");
+            default:
+                abort();
+        }
+    }
 
     // need array of vectors to create a square
     gsl_vector* data_sq[DIM];
@@ -41,8 +41,7 @@ int main(int argc, char **argv){
 
     if (smooth_opt == 1) {
         smooth_data_sq(data_sq, gauss_p);
-        char *sm_image_outfile = "smoothed_image.txt";
-        save_smoothed_image(sm_image_outfile, data_sq);
+        save_smoothed_image("smoothed_image.txt", data_sq);
     }
 
     // Mean of rows and cols
@@ -57,8 +56,7 @@ int main(int argc, char **argv){
     average_dim(data_sq, muy, axis);
 
     // save both x and y averages
-    char *data_sm_outfile = "data_sm.txt";
-    save_averaged_to_file(data_sm_outfile, mux, muy);
+    save_averaged_to_file("data_sm.txt", mux, muy);
 
     // Guassian Fit
     FinalPos *fpx = malloc(sizeof(FinalPos));
@@ -70,8 +68,7 @@ int main(int argc, char **argv){
     fit(mux, fpx, fit_data_x, axis);
 
     //save ascii data to file
-    char *outfile_data_model_x = "data_model_x.txt";
-    save_data_and_model(outfile_data_model_x, fpx, fit_data_x);
+    save_data_and_model("data_model_x.txt", fpx, fit_data_x);
 
     FinalPos *fpy = malloc(sizeof(FinalPos));
     Data *fit_data_y = malloc(sizeof(Data));
@@ -81,8 +78,7 @@ int main(int argc, char **argv){
     axis = 1;
     fit(muy, fpy, fit_data_y, axis);
 
-    char *outfile_data_model_y = "data_model_y.txt";
-    save_data_and_model(outfile_data_model_y, fpy, fit_data_y);
+    save_data_and_model("data_model_y.txt", fpy, fit_data_y);
 
     // clean up
     for (int i=0; i < DIM; i++) {
