@@ -14,7 +14,7 @@ fit_gaussian: fit_gaussian.c fit_tools.o
 	gcc $(CFLAGS) $(INCLUDE) $(LDFLAGS) fit_tools.o fit_gaussian.c -o fit_gaussian
 
 plot_fit: fit_gaussian
-	./fit_gaussian
+	./fit_gaussian -s
 	gnuplot plot_gaussian_fit.txt
 
 data.bin: convert_ascii_data_to_binary.cpp
@@ -25,7 +25,7 @@ plot_orig:
 	gnuplot -p plot_orig.txt
 
 clean:
-	rm *.png data.bin convert_ascii_to_binary fit_gaussian
+	rm data.bin convert_ascii_to_binary fit_gaussian
 	test -f fit_tools.o && rm fit_tools.o
 	test -f orig_beam_profile_img.txt && rm orig_beam_profile_img.txt
 	test -f data_sm.txt && rm data_sm.txt

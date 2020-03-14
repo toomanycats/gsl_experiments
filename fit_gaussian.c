@@ -29,6 +29,7 @@ int main(int argc, char **argv){
             case 's':
                 smooth_opt = 1;
                 printf("Using Smoothing\n");
+                break;
             default:
                 abort();
         }
@@ -42,6 +43,7 @@ int main(int argc, char **argv){
     if (smooth_opt == 1) {
         smooth_data_sq(data_sq, gauss_p);
         save_smoothed_image("smoothed_image.txt", data_sq);
+        gsl_filter_gaussian_free(gauss_p);
     }
 
     // Mean of rows and cols
@@ -91,7 +93,6 @@ int main(int argc, char **argv){
     free(fpy);
     free(fit_data_x);
     free(fit_data_y);
-    gsl_filter_gaussian_free(gauss_p);
 
     return 0;
 }
