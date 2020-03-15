@@ -39,7 +39,7 @@ with gaussian kernel.
 You can see from the plot, that there's a Y offset that can be removed before
 fitting. The conversion from pixels to microns is ~1.7 um/pixel.
 
-![Smoothed Beam](smoothed_image.png)
+![Smoothed Beam](smoothed_beam_profile.png)
 
 ## Fit Params
 The fit is performed on the two single dimension reductions (average) of the
