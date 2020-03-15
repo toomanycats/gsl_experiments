@@ -180,9 +180,12 @@ void solve_system(FinalPos *fp, gsl_vector *x0, gsl_multifit_nlinear_fdf *fdf, g
 
 
         /* print summary */
-        fprintf(stderr, "Axis %i\n", axis);
-        fprintf(stderr, "NITER         = %zu\n", gsl_multifit_nlinear_niter(work));
-        fprintf(stderr, "final         = A:%.6e, Mu:%.6e, Sig:%.6e\n", gsl_vector_get(x, 0), gsl_vector_get(x, 1), gsl_vector_get(x, 2));
+        fprintf(stderr, "Axis %i NITER:%zu A:%.6e, Mu:%.6e, Sig:%.6e \n", \
+            axis, \
+            gsl_multifit_nlinear_niter(work),\
+            gsl_vector_get(x, 0),\
+            gsl_vector_get(x, 1),\
+            gsl_vector_get(x, 2));
 
         fp->amp = gsl_vector_get(x, 0);
         fp->mu =  gsl_vector_get(x, 1);
@@ -198,9 +201,9 @@ void rem_data_offset(Data *fit_data, int num) {
             cur_min = fit_data->y[i];
     }
 
-   for (int j=0; j < num; j++){
-      fit_data->y[j] -= cur_min;
-   }
+    for (int j=0; j < num; j++) {
+        fit_data->y[j] -= cur_min;
+    }
 }
 
 int fit(gsl_vector *data_to_fit, FinalPos *fp, Data *fit_data, const int axis) {
