@@ -6,7 +6,6 @@ set multiplot layout 1,2
 set title "Averaged Rows"
 set xlabel "position pixels"
 set ylabel "intensity"
-unset ylabel
 unset key
 plot 'rows_cols_ave.ascii' u 0:2 with lines
 

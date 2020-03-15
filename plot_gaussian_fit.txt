@@ -3,16 +3,14 @@ set output 'gaussian_fit.png'
 
 set multiplot layout 1,2
 
-set title "Gaussian Fit to Smoothed Ave X"
+set title "Gaussian Fit to Ave X"
 set xlabel "position pixels"
 set ylabel "intensity"
 plot 'data_model_x.ascii' u 0:2 w lines title "Beam", ''  u 0:3 w lines title "Fit"
-unset key
 
-set title "Gaussian Fit to Smoothed Ave Y"
+set title "Gaussian Fit to Ave Y"
 set xlabel "position pixels"
 unset ytics
 unset ylabel
-unset key
 plot 'data_model_y.ascii' u 0:2 w lines title "Beam", ''  u 0:3 w lines title "Fit"
 

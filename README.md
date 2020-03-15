@@ -41,13 +41,13 @@ fitting. The conversion from pixels to microns is ~1.7 um/pixel.
 
 ![Smoothed Beam](smoothed_beam_profile.png)
 
-## Fit Params
-The fit is performed on the two single dimension reductions (average) of the
-2D image.
-
+### Average X and Y after Smoothing
 This plot are the two averaged rows and averaged columns:
 ![Smoothed Averages](smooth_ave_plot.png)
 
+## Fit Params
+The fit is performed on the two single dimension reductions (average) of the
+2D image.
 
 This plot is the Gaussian fit one of the above:
 ![Gaussian Fit](gaussian_fit.png)
