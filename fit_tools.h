@@ -1,3 +1,6 @@
+#ifndef FIT_TOOLS_H
+#define FIT_TOOLS_H
+
 #include <stdint.h>
 #include <gsl/gsl_filter.h>
 #include <gsl/gsl_vector.h>
@@ -31,3 +34,4 @@ void solve_system(FinalPos *fp, gsl_vector *x0, gsl_multifit_nlinear_fdf *fdf, g
 void rem_data_offset(Data *fit_data, int num);
 int fit(gsl_vector *data_to_fit, FinalPos *fp, Data *fit_data, int axis);
 int func_df(const gsl_vector*, void*, gsl_matrix*);
+ #endif
