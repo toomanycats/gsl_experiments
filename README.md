@@ -50,6 +50,7 @@ The fit is performed on the two single dimension reductions (average) of the
 2D image.
 
 Run the program:
+
     ./fit_gaussian
     Axis 0 NITER:11 A:627.666, Mu:151.280, Sig:23.162
     Axis 1 NITER:11 A:623.267, Mu:151.265, Sig:23.319
