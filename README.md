@@ -51,8 +51,8 @@ The fit is performed on the two single dimension reductions (average) of the
 
 Run the program:
     ./fit_gaussian
-    Axis 0 NITER:11 A:6.276657e+02, Mu:1.512805e+02, Sig:2.316173e+01
-    Axis 1 NITER:11 A:6.232667e+02, Mu:1.512649e+02, Sig:2.331919e+01
+    Axis 0 NITER:11 A:627.666, Mu:151.280, Sig:23.162
+    Axis 1 NITER:11 A:623.267, Mu:151.265, Sig:23.319
 
 This plot is the Gaussian fit one of the above:
 ![Gaussian Fit](gaussian_fit.png)
