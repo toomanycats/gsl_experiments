@@ -24,18 +24,27 @@
 #define DATA_MODEL_X "data_model_x.ascii"
 #define DATA_MODEL_Y "data_model_y.ascii"
 
+void print_usage(char* prog_name){
+    printf("Usage:%s  |  %s -s\n", prog_name, prog_name);
+    printf("-s is to use smoothing.\n");
+}
+
 int main(int argc, char **argv){
     // do not stop program if error occurs
     //gsl_set_error_handler_off();
 
-	int smooth_opt = 1;
-    int c;
-	while ((c = getopt(argc, argv, "s")) != -1) {
-        switch(c) {
+    int option, smooth_opt = 1;
+	while ((option = getopt(argc, argv, "sh")) != -1) {
+        switch(option) {
             case 's':
                 smooth_opt = 1;
                 printf("Using Smoothing\n");
                 break;
+
+            case 'h':
+                print_usage(argv[0]);
+                break;
+
             default:
                 abort();
         }
