@@ -18,6 +18,12 @@
 #include <gsl/gsl_filter.h>
 #include "fit_tools.h"
 
+#define INFILE "data.bin"
+#define IMG_SMOO "smoothed_image.ascii"
+#define AVG_DATA "rows_cols_ave.ascii"
+#define DATA_MODEL_X "data_model_x.ascii"
+#define DATA_MODEL_Y "data_model_y.ascii"
+
 int main(int argc, char **argv){
     // do not stop program if error occurs
     //gsl_set_error_handler_off();
@@ -37,28 +43,26 @@ int main(int argc, char **argv){
 
     // need array of vectors to create a square
     gsl_vector* data_sq[DIM];
-    load_data_from_file(data_sq);
+    load_data_from_file(INFILE, data_sq);
     gsl_filter_gaussian_workspace *gauss_p = gsl_filter_gaussian_alloc(K_SIZE);
 
     if (smooth_opt == 1) {
         smooth_data_sq(data_sq, gauss_p);
-        save_smoothed_image("smoothed_image.txt", data_sq);
+        save_smoothed_image(IMG_SMOO, data_sq);
         gsl_filter_gaussian_free(gauss_p);
     }
 
     // Mean of rows and cols
     //  X dim
     gsl_vector *mux = gsl_vector_alloc(DIM);
-    int axis = 0;
-    average_dim(data_sq, mux, axis);
+    average_dim(data_sq, mux, 0);
 
     // Y dim
     gsl_vector *muy = gsl_vector_alloc(DIM);
-    axis = 1;
-    average_dim(data_sq, muy, axis);
+    average_dim(data_sq, muy, 1);
 
     // save both x and y averages
-    save_averaged_to_file("data_sm.txt", mux, muy);
+    save_averaged_to_file(AVG_DATA, mux, muy);
 
     // Guassian Fit
     FinalPos *fpx = malloc(sizeof(FinalPos));
@@ -66,21 +70,19 @@ int main(int argc, char **argv){
     fit_data_x->t = malloc(DIM * sizeof(double));
     fit_data_x->y = malloc(DIM * sizeof(double));
     fit_data_x->n = DIM;
-    axis = 0;
-    fit(mux, fpx, fit_data_x, axis);
+    fit(mux, fpx, fit_data_x, 0);
 
     //save ascii data to file
-    save_data_and_model("data_model_x.txt", fpx, fit_data_x);
+    save_data_and_model(DATA_MODEL_X, fpx, fit_data_x);
 
     FinalPos *fpy = malloc(sizeof(FinalPos));
     Data *fit_data_y = malloc(sizeof(Data));
     fit_data_y->t = malloc(DIM * sizeof(double));
     fit_data_y->y = malloc(DIM * sizeof(double));
     fit_data_y->n = DIM;
-    axis = 1;
-    fit(muy, fpy, fit_data_y, axis);
+    fit(muy, fpy, fit_data_y, 1);
 
-    save_data_and_model("data_model_y.txt", fpy, fit_data_y);
+    save_data_and_model(DATA_MODEL_Y, fpy, fit_data_y);
 
     // clean up
     for (int i=0; i < DIM; i++) {

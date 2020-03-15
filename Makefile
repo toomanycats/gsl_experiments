@@ -1,4 +1,4 @@
-CFLAGS += -Wall -std=c99
+CFLAGS += -Wall -std=c99 -g
 INCLUDE += `gsl-config --cflags`
 LDFLAGS += `gsl-config --libs`
 
@@ -16,21 +16,22 @@ fit_gaussian: fit_gaussian.c fit_tools.o
 plot_fit: fit_gaussian
 	./fit_gaussian -s
 	gnuplot plot_gaussian_fit.txt
+	gnuplot plot_smoothed_image.txt
 
 data.bin: convert_ascii_data_to_binary.cpp
 	./convert_ascii_to_binary
 
 plot_orig:
-	xargs -n 299 < data.csv > orig_beam_profile_img.txt
+	xargs -n 299 < data.csv > orig_beam_profile_img.ascii
 	gnuplot -p plot_orig.txt
 
 clean:
 	rm data.bin convert_ascii_to_binary fit_gaussian
 	test -f fit_tools.o && rm fit_tools.o
-	test -f orig_beam_profile_img.txt && rm orig_beam_profile_img.txt
-	test -f data_sm.txt && rm data_sm.txt
-	test -f smoothed_image.txt && rm smoothed_image.txt
-	test -f data_model_x.txt && rm data_model_x.txt
-	test -f data_model_y.txt && rm data_model_x data_model_y
+	test -f orig_beam_profile_img.ascii && rm orig_beam_profile_img.ascii
+	test -f rows_cols_ave.ascii && rm rows_cols_ave.ascii
+	test -f smoothed_image.ascii && rm smoothed_image.ascii
+	test -f data_model_x.ascii && rm data_model_x.ascii
+	test -f data_model_y.ascii && rm data_model_y.ascii
 
 .PHONY: clean plot_orig plot_fit

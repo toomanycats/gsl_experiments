@@ -3,6 +3,10 @@ tags
 data.bin
 fit_gaussian
 convert_ascii_to_binary
-orig.ascii
-*.txt
-*.o
+fit_tools.o
+data_model_x.ascii
+data_model_y.ascii
+rows_cols_ave.ascii
+orig_beam_profile_img.ascii
+smoothed_image.ascii
+fit_tools.h.gch

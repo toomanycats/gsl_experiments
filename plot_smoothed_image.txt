@@ -4,4 +4,4 @@ set title "Smoothed Beam Profile"
 set view map
 set xrange[0:299]
 set yrange[0:299]
-splot 'smoothed_image.txt' matrix with image
+splot 'smoothed_image.ascii' matrix with image

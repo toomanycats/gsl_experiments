@@ -49,28 +49,23 @@ void save_averaged_to_file(const char *outfile, gsl_vector *mux, gsl_vector *muy
     fclose(f_sm);
 }
 
-void average_dim(gsl_vector *data_sq[], gsl_vector *mu_vec, int axis) {
-	double x, mu, mu_old;
+void average_dim(gsl_vector *data_sq[], gsl_vector *mu_vec, const int axis) {
+	double val, mu_new = 0, mu_old = 0;
     for (int i=0; i < DIM; i++){
 		for (int j=0; j < DIM; j++){
             if (axis == 0)
-                x = gsl_vector_get(data_sq[i], j);
+                val = gsl_vector_get(data_sq[i], j);
 
-            else if (axis == 1)
-                x = gsl_vector_get(data_sq[j], i);
-
-            else {
-                fprintf(stderr, "axis must be either 0 or 1.\n");
-                exit(-1);
-            }
+            else
+                val = gsl_vector_get(data_sq[j], i);
 
             if (j == 0)
-                mu_old = x;
+                mu_old = mu_new = val;
 
-            mu = mu_old + (x - mu_old) / (double)(j + 1);
-            mu_old = mu;
+            mu_new = mu_old + (val - mu_old) / (double)(j + 1);
+            mu_old = mu_new;
 		}
-        gsl_vector_set(mu_vec, i, mu);
+        gsl_vector_set(mu_vec, i, mu_new);
     }
 }
 
@@ -96,10 +91,10 @@ void transpose_data_sq(gsl_vector* data_sq[]) {
     }
 }
 
-void load_data_from_file(gsl_vector* data_sq[]) {
+void load_data_from_file(const char* infile_path, gsl_vector* data_sq[]) {
     int ret;
     FILE *infile;
-    infile = fopen(INFILE, "rb");
+    infile = fopen(infile_path, "rb");
     if (infile == NULL){
         printf("did not open file.\n");
         exit(-1);
@@ -118,7 +113,7 @@ void load_data_from_file(gsl_vector* data_sq[]) {
                 fprintf(stderr, "fread failure.\n");
                 exit(1);
             }
-            gsl_vector_set(data_sq[i], j, temp);
+            gsl_vector_set(data_sq[i], j, (double)temp);
         }
     }
 }
@@ -208,7 +203,7 @@ void rem_data_offset(Data *fit_data, int num) {
    }
 }
 
-int fit(gsl_vector *data_to_fit, FinalPos *fp, Data *fit_data, int axis) {
+int fit(gsl_vector *data_to_fit, FinalPos *fp, Data *fit_data, const int axis) {
     const size_t n = DIM;  /* number of data points to fit */
     const size_t p = 3;    /* number of model parameters */
 
