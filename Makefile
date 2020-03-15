@@ -1,4 +1,4 @@
-CFLAGS += -Wall -std=c99 -g
+CFLAGS += -Wall -std=c99
 INCLUDE += `gsl-config --cflags`
 LDFLAGS += `gsl-config --libs`
 
@@ -14,7 +14,7 @@ fit_gaussian: fit_gaussian.c fit_tools.o
 	gcc $(CFLAGS) $(INCLUDE) $(LDFLAGS) fit_tools.o fit_gaussian.c -o fit_gaussian
 
 plot_fit: fit_gaussian
-	./fit_gaussian -s
+	./fit_gaussian
 	gnuplot plot_gaussian_fit.txt
 	gnuplot plot_smoothed_image.txt
 
