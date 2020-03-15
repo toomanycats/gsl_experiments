@@ -2,7 +2,7 @@ CFLAGS += -Wall -std=c99
 INCLUDE += `gsl-config --cflags`
 LDFLAGS += `gsl-config --libs`
 
-all: plot_orig convert_ascii_to_binary data.bin fit_gaussian plot_fit
+all: plot_orig convert_ascii_to_binary data.bin fit_tools.o fit_gaussian plot_fit
 
 convert_ascii_to_binary: convert_ascii_data_to_binary.cpp
 	g++ $^ -o $@ $(AUX_FLAGS)
