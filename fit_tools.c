@@ -4,6 +4,10 @@
 #include <gsl/gsl_multifit_nlinear.h>
 #include "fit_tools.h"
 
+#define debug_print(fmt) \
+        do { fprintf(stderr, "**ERROR**: at %s:%d:%s():\n" fmt,  __FILE__, \
+                                __LINE__, __func__); } while (0)
+
 void save_data_and_model(char *outfile, FinalPos *fp, Data *fit_data) {
     FILE *file = fopen(outfile, "w");
     if (file == NULL){
@@ -99,7 +103,8 @@ void load_data_from_file(const char* infile_path, gsl_vector* data_sq[]) {
     FILE *infile;
     infile = fopen(infile_path, "rb");
     if (infile == NULL){
-        printf("Could not open file:%s. %i %s:%s.\n", infile_path, __LINE__, __FILE__, __func__);
+        debug_print();
+        //printf("Could not open file:%s. %i %s:%s.\n", infile_path, __LINE__, __FILE__, __func__);
         exit(-1);
     }
 
@@ -184,7 +189,7 @@ void solve_system(FinalPos *fp, gsl_vector *x0, gsl_multifit_nlinear_fdf *fdf, g
 
 
         /* print summary */
-        fprintf(stderr, "Axis %i NITER:%zu A:%.6e, Mu:%.6e, Sig:%.6e \n", \
+        fprintf(stderr, "Axis %i NITER:%zu A:%.3f, Mu:%.3f, Sig:%.3f \n", \
             axis, \
             gsl_multifit_nlinear_niter(work),\
             gsl_vector_get(x, 0),\
