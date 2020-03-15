@@ -27,7 +27,7 @@ void save_smoothed_image(char *outfile, gsl_vector* data_sq[]) {
     }
     for (int i=0; i < DIM; i++) {
         for (int j=0; j < DIM; j++) {
-            fprintf(f_img, "%f ", gsl_vector_get(data_sq[i], j));
+            fprintf(f_img, "%d ", (uint16_t)gsl_vector_get(data_sq[i], j));
         }
         fprintf(f_img, "\n");
     }
@@ -44,7 +44,7 @@ void save_averaged_to_file(const char *outfile, gsl_vector *mux, gsl_vector *muy
     for (int i=0; i < DIM; i++) {
         x = gsl_vector_get(mux, i);
         y = gsl_vector_get(muy, i);
-        fprintf(f_sm, "%i %f %f\n", i, x, y);
+        fprintf(f_sm, "%i %d %d\n", i, (uint16_t)x, (uint16_t)y);
     }
     fclose(f_sm);
 }
