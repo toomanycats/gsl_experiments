@@ -7,7 +7,8 @@
 void save_data_and_model(char *outfile, FinalPos *fp, Data *fit_data) {
     FILE *file = fopen(outfile, "w");
     if (file == NULL){
-        fprintf(stderr, "Failed to open file for writing:%s", __FUNCTION__);
+        fprintf(stderr, "Failed to open file '%s' for writing.%i, %s, %s",\
+                outfile,  __LINE__, __FILE__, __func__);
         exit(-1);
     }
 
@@ -22,7 +23,8 @@ void save_data_and_model(char *outfile, FinalPos *fp, Data *fit_data) {
 void save_smoothed_image(char *outfile, gsl_vector* data_sq[]) {
     FILE *f_img = fopen(outfile, "w");
     if (f_img == NULL) {
-        fprintf(stderr, "Failed to open output file for smoothed image.\n");
+        fprintf(stderr, "Failed to open output file:%s. %i %s %s.\n", outfile,\
+                __LINE__, __FILE__, __func__);
         exit(-2);
     }
     for (int i=0; i < DIM; i++) {
@@ -38,7 +40,8 @@ void save_averaged_to_file(const char *outfile, gsl_vector *mux, gsl_vector *muy
     double x, y;
     FILE *f_sm = fopen(outfile, "w");
     if (f_sm == NULL){
-        printf("Could not open file for smooth data save.\n");
+        printf("Could not open file for writing:%s. %i %s %s.\n", outfile, \
+                __LINE__, __FILE__, __func__);
         exit(-1);
     }
     for (int i=0; i < DIM; i++) {
@@ -96,7 +99,7 @@ void load_data_from_file(const char* infile_path, gsl_vector* data_sq[]) {
     FILE *infile;
     infile = fopen(infile_path, "rb");
     if (infile == NULL){
-        printf("did not open file.\n");
+        printf("Could not open file:%s. %i %s:%s.\n", infile_path, __LINE__, __FILE__, __func__);
         exit(-1);
     }
 
@@ -104,13 +107,14 @@ void load_data_from_file(const char* infile_path, gsl_vector* data_sq[]) {
         data_sq[i] = gsl_vector_alloc(DIM);
     }
 
-    // Load Data
-    int temp;
+    // Load data as ints from binary file.
+    int temp, old_ret;
     for (int i=0; i < DIM; i++) {
         for(int j=0; j < DIM; j++){
             ret = fread(&temp, sizeof(uint16_t), 1, infile);
+            old_ret = ret;
             if (ret < 0){
-                fprintf(stderr, "fread failure.\n");
+                fprintf(stderr, "fread failure at:%i. %i %s %s.\n", old_ret + 1, __LINE__, __FILE__, __func__);
                 exit(1);
             }
             gsl_vector_set(data_sq[i], j, (double)temp);
