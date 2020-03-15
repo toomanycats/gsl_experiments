@@ -49,5 +49,10 @@ This plot are the two averaged rows and averaged columns:
 The fit is performed on the two single dimension reductions (average) of the
 2D image.
 
+Run the program:
+    ./fit_gaussian
+    Axis 0 NITER:11 A:6.276657e+02, Mu:1.512805e+02, Sig:2.316173e+01
+    Axis 1 NITER:11 A:6.232667e+02, Mu:1.512649e+02, Sig:2.331919e+01
+
 This plot is the Gaussian fit one of the above:
 ![Gaussian Fit](gaussian_fit.png)
