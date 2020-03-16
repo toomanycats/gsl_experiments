@@ -4,6 +4,10 @@ LDFLAGS += `gsl-config --libs`
 
 all: convert_ascii_to_binary data.bin fit_tools.o fit_gaussian data_model_%.ascii
 
+get_data:
+	export EPICS_CA_MAX_ARRAY_BYTES=10000000
+	caget BL31:image1:ArrayData | tr " " "\n" | head -n 89401 > data.csv
+
 convert_ascii_to_binary: convert_ascii_data_to_binary.cpp
 	g++ $^ -o $@ $(AUX_FLAGS)
 
@@ -29,4 +33,4 @@ clean:
 	test -f data_model_x.ascii && rm data_model_x.ascii
 	test -f data_model_y.ascii && rm data_model_y.ascii
 
-.PHONY: clean plot_orig
+.PHONY: clean plot_orig get_data
