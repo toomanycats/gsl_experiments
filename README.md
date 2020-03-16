@@ -8,9 +8,13 @@ written in C++ that perform analysis on the image. This C program will eventuall
 become such a plugin if it proves useful.
 
 ## Input Test Data
-Ascii data `data.csv` comes from `caget channel_name`.
+Ascii data `data.csv` comes from `caget BL31:image1:ArrayData`.
 The CPP program `create_binary_data.cpp` converts the ascii data into a binary file
 `data.bin`.
+
+To perform `caget` or `camonitor`, set the environment variable
+
+    export  EPICS_CA_MAX_ARRAY_BYTES=10000000
 
 ## GSL
 GSL is then used to read the binary data and  perform the following steps:
