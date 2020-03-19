@@ -10,3 +10,4 @@ rows_cols_ave.ascii
 orig_beam_profile_img.ascii
 smoothed_image.ascii
 fit_tools.h.gch
+fit_gaussian_camonitor
