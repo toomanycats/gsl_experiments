@@ -1,8 +1,18 @@
 CFLAGS += -Wall -std=c99
 INCLUDE += `gsl-config --cflags`
 LDFLAGS += `gsl-config --libs`
+# for camonitor version
+INC =  -I/usr/local/epics/R3.15/base-3.15/include
+INC += -I/usr/local/epics/R3.15/base-3.15/include/os/Linux
+INC += -I/usr/local/epics/R3.15/base-3.15/src/ca/client/tools
+INC += -I/usr/local/epics/R3.15/base-3.15/include/compiler/gcc
+LIB += -L/usr/local/epics/R3.15/base/lib/linux-x86_64
+TOOLS = /usr/local/epics/R3.15.4/base-3.15/src/ca/client/tools/O.linux-x86_64/tool_lib.o
 
 all: convert_ascii_to_binary data.bin fit_tools.o fit_gaussian data_model_%.ascii
+
+fit_gaussian_camonitor: fit_gaussian_camonitor.c
+	gcc $(CFLAGS) -g  $(INCLUDE) $(LDFLAGS) $(INC) $(LIB) -lca -lCom $(TOOLS) fit_tools.o  $^ -o $@
 
 get_data:
 	export EPICS_CA_MAX_ARRAY_BYTES=10000000
