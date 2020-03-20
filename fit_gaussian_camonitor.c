@@ -107,8 +107,11 @@ void call_camonitor() {
     }
     /* Check if the channel didn't connect */
     ca_pend_event(caTimeout);
-    if (!pvs[0].onceConnected)
+    if (!pvs[0].onceConnected) {
         print_time_val_sts(&pvs[0], reqElems);
+        fprintf(stderr, "Camera data channel not found.");
+        exit(-1);
+    }
 
     /* Read and print data forever */
     ca_pend_event(0);
@@ -116,19 +119,22 @@ void call_camonitor() {
     return;
 }
 
-
 int main () {
     for (int i=0; i <= DIM; i++) {
         data_sq[i] = gsl_vector_alloc(DIM);
     }
+
+    mux = gsl_vector_alloc(DIM);
+    muy = gsl_vector_alloc(DIM);
+
     fpx = malloc(sizeof(FinalPos));
     fit_data_x = malloc(sizeof(Data));
     fit_data_x->t = malloc(DIM * sizeof(double));
     fit_data_x->y = malloc(DIM * sizeof(double));
     fit_data_x->n = DIM;
 
-    FinalPos *fpy = malloc(sizeof(FinalPos));
-    Data *fit_data_y = malloc(sizeof(Data));
+    fpy = malloc(sizeof(FinalPos));
+    fit_data_y = malloc(sizeof(Data));
     fit_data_y->t = malloc(DIM * sizeof(double));
     fit_data_y->y = malloc(DIM * sizeof(double));
     fit_data_y->n = DIM;
