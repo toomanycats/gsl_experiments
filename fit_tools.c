@@ -215,7 +215,7 @@ void rem_data_offset(Data *fit_data, int num) {
     }
 }
 
-int fit(gsl_vector *data_to_fit, FinalPos *fp, Data *fit_data, const int axis) {
+void fit(gsl_vector *data_to_fit, FinalPos *fp, Data *fit_data, const int axis) {
     const size_t n = DIM;  /* number of data points to fit */
     const size_t p = 3;    /* number of model parameters */
 
@@ -235,7 +235,7 @@ int fit(gsl_vector *data_to_fit, FinalPos *fp, Data *fit_data, const int axis) {
 
     /* define function to be minimized */
     fdf.f = func_f;
-     fdf.df = NULL;  /* set to NULL for finite-difference Jacobian */
+    fdf.df = NULL;  /* set to NULL for finite-difference Jacobian */
     //fdf.df = func_df;
     fdf.fvv = NULL; /* not using geodesic acceleration */
     fdf.n = n;
@@ -251,6 +251,4 @@ int fit(gsl_vector *data_to_fit, FinalPos *fp, Data *fit_data, const int axis) {
 
     gsl_vector_free(f);
     gsl_vector_free(x0);
-
-    return 0;
 }

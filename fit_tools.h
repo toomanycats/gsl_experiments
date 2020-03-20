@@ -32,6 +32,6 @@ void load_data_from_file(const char*, gsl_vector* data_sq[]);
 double gaussian(const double a, const double b, const double c, const double t);
 void solve_system(FinalPos *fp, gsl_vector *x0, gsl_multifit_nlinear_fdf *fdf, gsl_multifit_nlinear_parameters *params, int axis);
 void rem_data_offset(Data *fit_data, int num);
-int fit(gsl_vector *data_to_fit, FinalPos *fp, Data *fit_data, int axis);
+void fit(gsl_vector *data_to_fit, FinalPos *fp, Data *fit_data, int axis);
 int func_df(const gsl_vector*, void*, gsl_matrix*);
  #endif
