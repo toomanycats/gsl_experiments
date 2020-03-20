@@ -9,8 +9,11 @@
 #include <stdint.h>
 #include <signal.h>
 #include <tool_lib.h>
+#include <epicsTime.h>
 #include "fit_tools.h"
 
+// TODO: put in header
+#define TIMETEXTLEN 28 /* copied from tool_lib.c wasn't in header */
 #define VALID_DOUBLE_DIGITS 6
 #define TIME_TO_WAIT 0.5
 #define BUFFER_SIZE 128
@@ -19,6 +22,8 @@
 static unsigned long reqElems = 0;
 static unsigned long eventMask = DBE_VALUE;
 static int nConn;
+// TODO: put in header
+char TimeFormatStr[30] = "%Y-%m-%d %H:%M:%S.%06f"; /* Time format string   */
 
 gsl_vector *data_sq[DIM];
 gsl_vector *mux;
@@ -34,7 +39,6 @@ static void event_handler (evargs args)
     {
         /* ptr to value given a pointer to the structure and the DBR type */
         //dbr_char_t *v = dbr_value_ptr(args.dbr, args.type);
-        //dbr_ushort_t *v = dbr_value_ptr(args.dbr, args.type);
         dbr_ushort_t *v = (void*)args.dbr;
 
         // create gsl vector from waveform
@@ -49,6 +53,19 @@ static void event_handler (evargs args)
 
         average_dim(data_sq, muy, 1);
         fit(muy, fpy, fit_data_y, 1);
+
+        //char timeText[2 * TIMETEXTLEN + 2];
+        epicsTimeStamp ts = ((struct dbr_time_short*)v)->stamp;
+        //epicsTimeToStrftime(timeText, TIMETEXTLEN, TimeFormatStr, &ts);
+        // printf("%s\n", timeText);
+        printf("%lu\n", (long int)ts.secPastEpoch);
+
+        // for now use provided method
+        //pv* pv = args.usr;
+        //pv->status = args.status;
+        //pv->nElems = args.count;
+        //pv->value = (void*)args.dbr;
+        //print_time_val_sts(pv, reqElems);
     }
 }
 
