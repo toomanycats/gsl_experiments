@@ -37,6 +37,7 @@ static void event_handler (evargs args)
 {
     if (args.status == ECA_NORMAL)
     {
+        printf("testing\n");
         /* ptr to value given a pointer to the structure and the DBR type */
         //dbr_char_t *v = dbr_value_ptr(args.dbr, args.type);
         dbr_ushort_t *v = (void*)args.dbr;
@@ -58,7 +59,6 @@ static void event_handler (evargs args)
         epicsTimeStamp ts = ((struct dbr_time_short*)v)->stamp;
         epicsTimeToStrftime(timeText, TIMETEXTLEN, "%Y-%m-%d %H:%M:%S.%06f", &ts);
         printf("%s\n", timeText);
-        //printf("%lu\n", (long int)ts.secPastEpoch);
     }
 }
 
@@ -92,11 +92,11 @@ void call_camonitor() {
     int result, returncode = 0;
 
     /* Allocate PV structure array */
-    pv* pvs = calloc(1, sizeof(pv));
+    pv* pvs = malloc(sizeof(pv));
     if (!pvs)
     {
         fprintf(stderr, "Memory allocation for channel structures failed.\n");
-        pthread_exit((void*)-1);
+        exit(-1);
     }
 
     pvs->name = CHANNEL;
@@ -106,14 +106,14 @@ void call_camonitor() {
     if (result != ECA_NORMAL) {
         fprintf(stderr, "CA error %s occurred while trying to start"
                " channel access.\n", ca_message(result));
-        pthread_exit((void*)-1);
+        exit(-1);
     }
 
     /* create CA virtual circuits */
     returncode = create_pvs(pvs, 1, connection_handler);
     if ( returncode ) {
         fprintf(stderr, "create pvs failed.");
-        pthread_exit((void*)-1);
+        exit(-1);
     }
     /* Check if the channel didn't connect */
     ca_pend_event(caTimeout);
