@@ -4,9 +4,11 @@ LDFLAGS += `gsl-config --libs`
 
 all: convert_ascii_to_binary data.bin fit_tools.o fit_gaussian data_model_%.ascii
 
-get_data:
+plot_profile:
 	export EPICS_CA_MAX_ARRAY_BYTES=10000000
-	caget BL31:image1:ArrayData | tr " " "\n" | head -n 89401 > data.csv
+	caget -t BL31:image1:ArrayData | tr " " "\n" | head -n 89402 | tail -n 89401 > data.csv
+	cat data.csv | xargs -n 299 > orig_beam_profile_img.ascii
+	gnuplot plot_orig.txt
 
 convert_ascii_to_binary: convert_ascii_data_to_binary.cpp
 	g++ $^ -o $@ $(AUX_FLAGS)
@@ -21,7 +23,7 @@ data_model_%.ascii: plot_gaussian_fit.txt
 	./fit_gaussian
 	gnuplot plot_gaussian_fit.txt
 
-data.bin: convert_ascii_data_to_binary.cpp
+data.bin: convert_ascii_data_to_binary.cpp data.csv
 	./convert_ascii_to_binary
 
 clean:
@@ -33,4 +35,4 @@ clean:
 	test -f data_model_x.ascii && rm data_model_x.ascii
 	test -f data_model_y.ascii && rm data_model_y.ascii
 
-.PHONY: clean plot_orig get_data
+.PHONY: clean plot_orig get_data plot_profile
