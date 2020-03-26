@@ -104,11 +104,10 @@ void load_data_from_file(const char* infile_path, gsl_vector* data_sq[]) {
     infile = fopen(infile_path, "rb");
     if (infile == NULL){
         debug_print();
-        //printf("Could not open file:%s. %i %s:%s.\n", infile_path, __LINE__, __FILE__, __func__);
         exit(-1);
     }
 
-    for (int i=0; i <= DIM; i++) {
+    for (int i=0; i < DIM; i++) {
         data_sq[i] = gsl_vector_alloc(DIM);
     }
 
